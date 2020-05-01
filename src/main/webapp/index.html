@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta charset="utf-8" />
+		<title>EasyUI Demo</title>
+		<link rel="stylesheet" type="text/css" href="css/themes/default/easyui.css" />
+	    <link rel="stylesheet" type="text/css" href="css/themes/icon.css" />
+	    <link rel="stylesheet" type="text/css" href="css/common.css" />
+	    <script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
+		<script type="text/javascript" src="js/jquery.easyui.min.js"></script>
+		<script type="text/javascript" src="js/easyui-lang-zh_CN.js"></script>
+		<!-- 导入ztree类库 -->
+		<link rel="stylesheet" href="js/ztree/zTreeStyle.css" type="text/css" />
+		<script src="js/ztree/jquery.ztree.all-3.5.js" type="text/javascript"></script>
+		<script type="text/javascript">
+		//==========================================顶部（北）===========================================================
+			// 退出登录
+			function logoutFun() {
+				$.messager
+				.confirm('系统提示','您确定要退出本次登录吗?',function(isConfirm) {
+					if (isConfirm) {
+						location.href = '${pageContext.request.contextPath }/userAction_logout.action';
+					}
+				});
+			}
+		
+			    // 页面加载后 右下角 弹出窗口
+			/**************/
+			window.setTimeout(function(){
+				$.messager.show({
+					title:"消息提示",
+					msg:'欢迎登录，超级管理员！ <a href="javascript:void" onclick="top.showAbout();">联系管理员</a>',
+					timeout:5000
+				});
+			},3000);
+			/*************/
+			
+			function editClose(){
+			     $('#editPwdWindow').window('close');
+		    };
+		     function doAdd(){
+	       	    $('#addStaffWindow').window("open");
+		    };
+			//为确定按钮绑定事件
+		    function yz(){
+				//进行表单校验
+				var v = $("#editPasswordForm").form("validate");
+				if(v){
+					//表单校验通过，手动校验两次输入是否一致
+					var v1 = $("#txtNewPass").val();
+					var v2 = $("#txtRePass").val();
+					if(v1 == v2){
+						//两次输入一致，发送ajax请求
+						//$.post("userAction_editPassword.action",{"password":v1},function(data){
+							var data=2;
+							if(data == '1'){
+								//修改成功，关闭修改密码窗口
+								$("#editPwdWindow").window("close");
+							}else{
+								//修改密码失败，弹出提示
+								$.messager.alert("提示信息","密码修改失败！","error");
+							}
+						//});
+					}else{
+						//两次输入不一致，弹出错误提示
+						$.messager.alert("提示信息","两次密码输入不一致！","warning");
+					}
+				}
+			};
+			
+			// 修改密码
+		     function editPassword() {
+			//打开修改密码窗口
+			    $('#editPwdWindow').window('open');
+		    };
+			//====================================北end========================================
+	
+			//======================================左菜单==========================================
+			$(function() {
+		        $.ajax({
+		            type : 'get',
+		            dataType : "json",
+		            url : "data/accordion.json",
+		            success : function(data) {
+		                $.each(data, function(i, n) {//加载父类节点即一级菜单
+		                	var content='<ul class="navmenu"><li class="active">';
+		                	$.each(n.children, function(j, m) {
+		                		
+		                		content=content+'<li><a href="#" data-url="'+m.page+'">'+m.title+'</a></li>'
+		                		
+		                	});
+		                	
+		                	content=content+'</ul>'
+		                	
+		                	
+		                	if (i == 0) {//显示第一个一级菜单下的二级菜单
+			                        $('#navmenu').accordion('add', {
+			                            title : n.title,
+			                            selected : true,
+			                            content : content,
+			                        });
+		                    } else {
+		                        $('#navmenu').accordion('add', {
+		                            title : n.title,
+		                            selected : false,
+		                            content : content,
+		                        });
+		                    }
+		                    
+		 
+		                });
+		            }
+        	   });
+        	});
+			$(function() {
+							$("#tt").tabs("add", {
+										title: '首页',
+//										href:"html/shouye.html",
+										content: '<div style="width:100%;height:100%;overflow:hidden;"><iframe src="html/shouye.html" scrolling="auto" style="width:100%;height:100%;border:0;" ></iframe></div>',
+										closable: false
+									});
+				//添加新的Tab页
+				$("#navmenu").on("click", "a[data-url]", function(e) {
+					e.preventDefault();
+					var tabTitle = $(this).text();
+					var tabUrl = $(this).data("url");
+					
+					if($("#tt").tabs("exists", tabTitle)) { //判断该Tab页是否已经存在
+						$("#tt").tabs("select", tabTitle);
+					}else {
+						$("#tt").tabs("add", {
+							title: tabTitle,
+							href: tabUrl,
+							closable: true
+						});
+					}
+					$("#navmenu .active").removeClass("active");
+					$(this).parent().addClass("active");
+				});
+				
+				//解决闪屏的问题
+				window.setTimeout(function() {
+					$("#layout").css("visibility", "visible");
+				}, 800);
+			});
+			//======================================左菜单end==========================================     
+	  	</script>
+		
+	</head>
+	<body class="easyui-layout" id="layout" style="visibility:hidden;">
+		
+		//================================================顶部（北）===============================================================
+		//涉及业务：1.修改密码 2.退出登陆 3.权限控制没有sesion自动跳回登陆页面
+		<div region="north" id="header">
+			<img src="img/logo.png" class="logo" />
+			<div class="top-btns">
+				<span>欢迎您，管理员</span>
+				<button onclick="dodd()">新增</button>
+				<a onclick="editPassword();" href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-lock'">修改密码</a>
+				
+			<!--修改密码窗口-->
+    <div id="editPwdWindow" class="easyui-window" title="修改密码" collapsible="false" minimizable="false" modal="true" closed="true" resizable="false"
+        maximizable="false" icon="icon-save"  style="width: 360px; height:200px; padding: 5px;
+        background: #fafafa">
+        <div class="easyui-layout" fit="true">
+            <div region="center" border="false" style="padding: 10px; background: #fff; border: 1px solid #ccc;">
+               <form id="editPasswordForm">
+	                <table cellpadding=3>
+	                    <tr>
+	                        <td>新密码：</td>
+	                        <td><input  required="true" data-options="validType:'length[4,6]'" id="txtNewPass" type="Password" class="txt01 easyui-validatebox" /></td>
+	                    </tr>
+	                    <tr>
+	                        <td>确认密码：</td>
+	                        <td><input required="true" data-options="validType:'length[4,6]'" id="txtRePass" type="Password" class="txt01 easyui-validatebox" /></td>
+	                    </tr>
+	                </table>
+               </form>
+            </div>
+            <div region="south" border="false" style="text-align: right; height: 30px; line-height: 30px;">
+                <a onclick="yz();" id="btnEp" class="easyui-linkbutton" icon="icon-ok" href="javascript:void(0)" >确定</a> 
+                <a onclick="editClose();"  id="btnCancel" class="easyui-linkbutton" icon="icon-cancel" href="javascript:void(0)">取消</a>
+            </div>
+        </div>
+    </div>
+				<a onclick="logoutFun();" href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-clear'">退出系统</a>
+				<select class="easyui-combobox" data-options="editable:false">
+					<option value="0" selected="selected">中文</option>
+					<option value="1">English</option>
+				</select>
+			</div>
+		</div>
+		
+		//=============================================北end=============================================================
+		
+		
+		//================================================左部（西）===========================================================
+		//需求：1.动态加载菜单内容//改tree更可以：根据登陆人查询权限加载菜单pid形式
+		//2.
+		<div region="west" split="true" title="导航菜单" id="naver">
+			<div class="easyui-accordion" fit="true" id="navmenu" data-options="fit:true,border:false,nimate:true,lines:true">
+			</div>
+		</div>
+		
+		<div region="center" id="content">
+			<div class="easyui-tabs" fit="true" id="tt">
+			</div>
+		</div>
+		
+		
+		
+		
+		
+		//======================================底部====================================================================
+		<div region="south" id="footer">某某后台管理系统 V1.0</div>
+		//========================================底部end==================================================================
+		
+		
+		
+		
+	</body>
+</html>

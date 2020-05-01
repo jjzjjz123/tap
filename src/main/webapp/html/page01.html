@@ -1,0 +1,159 @@
+//1.最好写成完整的页面，tabs用content结合iframe，而不是现在的href;方便刷新和单页面编写！
+//2.增删改查-----mysql---------刷新页面
+//3.增改----弹框
+//4.选中删除或list后面按钮
+//5.数据表格、etree见shouye.html
+
+
+
+
+
+
+
+<div class="easyui-layout" data-options="fit:true">
+	<div class="inner-header" data-options="region:'north'">
+		<a href="#" class="easyui-linkbutton" iconCls="icon-back">导入</a>
+		<a href="javascript:void(0)"  class="easyui-linkbutton" iconCls="icon-add" plain="true" >新增</a>
+   		<a href="#" class="easyui-linkbutton" iconCls="icon-edit">编辑</a>
+    	<a href="#" class="easyui-linkbutton" iconCls="icon-remove">删除</a>
+	</div>
+	<div class="tree-div" data-options="region:'west'">
+		<div class="easyui-panel" title="部门列表" data-options="fit:true">
+			<ul class="easyui-tree">
+				<li>
+					<span>某某总公司</span>
+					<ul>
+						<li>
+							<span>职能部门</span>
+							<ul>
+								<li><span>人力资源部</span></li>
+								<li><span>业务系统部</span></li>
+								<li><span>财务部</span></li>
+								<li><span>董事会</span></li>
+							</ul>
+						</li>
+						<li>
+							<span>国内事业部</span>
+							<ul>
+								<li><span>北京分公司</span></li>
+								<li><span>上海分公司</span></li>
+								<li><span>杭州分公司</span></li>
+							</ul>
+						</li>
+						<li>
+							<span>海外事业部</span>
+							<ul>
+								<li><span>纽约事业部</span></li>
+								<li><span>硅谷事业部</span></li>
+								<li><span>欧盟事业部</span></li>
+								<li><span>东南亚事业部</span></li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+	</div>
+	<div class="inner-content" data-options="region:'center'">
+		<!-- 数据表 -->
+		<table class="easyui-datagrid" title="人员列表" fit="true" fitColumns="true"
+			url="data/griddata2.json" method="get" toolbar="#toolbar2" 
+			striped="true" rownumbers="true" pagination="true" remoteSort="false">
+			<thead>
+				<tr>
+					<th field="number" width="30" align="center" sortable="true">员工编号</th>
+					<th field="username" width="20" align="center" sortable="true">用户名</th>
+					<th field="role" width="50" align="center" sortable="true">角色</th>
+				</tr>
+			</thead>
+		</table>
+		<!-- /数据表 -->
+		
+		<!-- 数据表工具栏 -->
+		<div class="toolbar" id="toolbar2">
+			<div class="search-div">
+				<label>员工编号：</label>
+				<input type="text" class="easyui-textbox" />
+				<label>用户名称：</label>
+				<input type="text" class="easyui-textbox" />
+				<a href="#" class="easyui-linkbutton" iconCls="icon-search">搜索</a>
+	        </div>
+			<div class="ctrl-div">
+				<a onclick="doAdd()" href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-add" plain="true" >新增</a>
+	       		<a href="#" class="easyui-linkbutton" iconCls="icon-edit" plain="true">编辑</a>
+	        	<a href="#" class="easyui-linkbutton" iconCls="icon-remove" plain="true">批量删除</a>
+			</div>
+	    </div>
+	    <!-- /数据表工具栏 -->
+</div>
+
+
+
+
+</div>
+	<div class="easyui-window" title="对收派员进行添加或者修改" id="addStaffWindow" collapsible="false" closed="true" minimizable="false" maximizable="false" style="top:20px;left:200px">
+		<div region="north" style="height:31px;overflow:hidden;" split="false" border="false" >
+			<div class="datagrid-toolbar">
+				<a id="save" icon="icon-save" href="#" class="easyui-linkbutton" plain="true" >保存</a>
+			</div>
+		</div>
+		
+		<div region="center" style="overflow:auto;padding:5px;" border="false">
+			<form id="addStaffForm" action="staffAction_add.action" method="post">
+				<table class="table-edit" width="80%" align="center">
+					<tr class="title">
+						<td colspan="2">收派员信息</td>
+					</tr>
+					<tr>
+						<td>姓名</td>
+						<td><input type="text" name="name" class="easyui-validatebox" required="true"/></td>
+					</tr>
+					<tr>
+						<td>手机</td>
+						<td>
+							<script type="text/javascript">
+								$(function(){
+									//为保存按钮绑定事件
+									$("#save").click(function(){
+										//表单校验，如果通过，提交表单
+										var v = $("#addStaffForm").form("validate");
+										if(v){
+											//$("#addStaffForm").form("submit");
+											$("#addStaffForm").submit();
+										}
+									});
+									
+									var reg = /^1[3|4|5|7|8][0-9]{9}$/;
+									//扩展手机号校验规则
+									$.extend($.fn.validatebox.defaults.rules, { 
+										telephone: { 
+											validator: function(value,param){ 
+											return reg.test(value);
+										}, 
+											message: '手机号输入有误！' 
+										}
+										}); 
+									});
+							</script>
+						<input type="text" data-options="validType:'telephone'" 
+							name="telephone" class="easyui-validatebox" required="true"/></td>
+					</tr>
+					<tr>
+						<td>单位</td>
+						<td><input type="text" name="station" class="easyui-validatebox" required="true"/></td>
+					</tr>
+					<tr>
+						<td colspan="2">
+						<input type="checkbox" name="haspda" value="1" />
+						是否有PDA</td>
+					</tr>
+					<tr>
+						<td>取派标准</td>
+						<td>
+							<input type="text" name="standard" class="easyui-validatebox" required="true"/>  
+						</td>
+					</tr>
+					</table>
+			</form>
+		</div>
+	</div>
