@@ -18,7 +18,7 @@ import com.google.gson.JsonParser;
 import net.sf.json.JSONObject;
 @Component
 public class TaoQ {
-
+123
 	@Scheduled(fixedDelay = 24*60*1000*60)
 //	@Scheduled(cron= "0 00 6,12,18 * * ?") 
 	public void sm()  {
