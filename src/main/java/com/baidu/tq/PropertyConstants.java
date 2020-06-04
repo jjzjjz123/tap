@@ -14,6 +14,7 @@ public class PropertyConstants {
 				properties.load(loader.getResourceAsStream("application.properties"));
 			} catch (IOException e) {
 				e.printStackTrace();
+				e.printStackTrace();
 			}
 		}
 	}
