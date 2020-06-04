@@ -18,10 +18,17 @@
     <properties>
         <java.version>1.8</java.version>
     </properties>
+<<<<<<< HEAD
+    d
+    e
+  <dependencies>
+  f
+=======
     a
     b
   <dependencies>
   c
+>>>>>>> 782a13834999e9988349d13b5bde8c309d79c35f
   <!--Jsoup -->
 		<dependency>
 			<groupId>org.jsoup</groupId>
