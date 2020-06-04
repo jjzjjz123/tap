@@ -32,7 +32,7 @@ public class TaoQ {
 
 		System.out.println(array.size()+"长度");
 		System.out.println(array.size()+"长度");
-
+		System.out.println(array.size()+"长度");
 		for (int i = 1; i <56; i++) {
 			JsonObject subObject=array.get(i).getAsJsonObject();
             String id = subObject.get("ID").getAsString();
@@ -50,6 +50,7 @@ public class TaoQ {
 			} catch (Exception e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
+				System.out.println(array.size()+"长度");
 			}
             
     		JsonObject object1 = (JsonObject) parser.parse(gettkl);
