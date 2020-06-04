@@ -29,8 +29,10 @@ public class TaoQ {
 		JsonObject object = (JsonObject) parser.parse(responseInfo);
 		JsonArray array= object.get("data").getAsJsonArray();
 		System.out.println(array.size()+"长度");
+
 		System.out.println(array.size()+"长度");
 		System.out.println(array.size()+"长度");
+
 		for (int i = 1; i <56; i++) {
 			JsonObject subObject=array.get(i).getAsJsonObject();
             String id = subObject.get("ID").getAsString();
